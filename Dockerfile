@@ -1,13 +1,12 @@
 FROM alpine:3.6
 ENV ANSIBLE_VERSION 2.4.1.0
 ENV JINJA2_VERSION 2.10
-ENV AWSCLI_VERSION 1.11.185
-ENV KUBE_AWS_RELEASE v0.9.8
+ENV AWSCLI_VERSION 1.15.59
 ENV KUBECTL_VERSION v1.8.5
 
 RUN apk update \
     && apk add --no-cache unzip curl tar bash \
-    python make bash vim jq  \
+    python make bash vim jq  groff \
     openssl openssh-client sshpass  \
     gcc libffi-dev python-dev musl-dev openssl-dev py-pip py-virtualenv \
     git coreutils less bash-completion \
@@ -19,14 +18,6 @@ RUN apk update \
 RUN curl -L -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x /usr/bin/kubectl && \
     kubectl completion bash > /etc/bash_completion.d/kubectl.sh
-
-# Intsall kube-aws
-RUN curl --fail -sSL -O https://github.com/kubernetes-incubator/kube-aws/releases/download/${KUBE_AWS_RELEASE}/kube-aws-linux-amd64.tar.gz && \
-    tar xzf kube-aws-linux-amd64.tar.gz && \
-    mv linux-amd64/kube-aws /usr/local/bin/kube-aws && \
-    chmod +x /usr/local/bin/kube-aws && \
-    rm -rf linux-amd64/ && \
-    rm -f kube-aws-linux-amd64.tar.gz
 
 # Install Ansible
 RUN pip install ansible==${ANSIBLE_VERSION} Jinja2==${JINJA2_VERSION} && \
